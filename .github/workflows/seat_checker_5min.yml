@@ -2,7 +2,7 @@ name: UVM Seat Checker (Every 5 Minutes)
 
 on:
   schedule:
-    - cron: "* * * * *"   # every 5 minutes, UTC
+    - cron: "*/5 * * * *"   # every 5 minutes, UTC
   workflow_dispatch:          # manual run button
 
 jobs:
