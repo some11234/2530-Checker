@@ -13,7 +13,8 @@ BODY = {
 
 HEADERS = {
     "Content-Type": "application/json",
-    "X-Requested-With": "XMLHttpRequest"
+    "X-Requested-With": "XMLHttpRequest",
+    "User-Agent": "UVM-Seat-Checker/1.0 (personal; 1req/5min)"
 }
 
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")
@@ -42,29 +43,21 @@ def main():
     seats_avail = int(m.group(1))
     print(f"Parsed seats_avail = {seats_avail}")
 
-    # 🔥 TEMP: force trigger when seats_avail == 0 so we can test IFTTT
-    if seats_avail == 0:
-        print("Test condition met: seats_avail == 0, should trigger webhook.")
-    else:
-        print("Test condition NOT met, but we'll still trigger for debugging.")
-
-    print(f"WEBHOOK_URL present? {'yes' if WEBHOOK_URL else 'NO'}")
-
-    if not WEBHOOK_URL:
-        print("WEBHOOK_URL not set, cannot trigger IFTTT.")
+    # Only trigger when there are actually open seats
+    if seats_avail <= 0:
+        print("😔 No open seats right now. Not triggering webhook.")
         return
 
-    print("Triggering IFTTT webhook...")
-    payload = {
-        "value1": "HLTH 2530 EMT (test)",
-        "value2": f"CRN {crn}",
-        "value3": f"Seats available: {seats_avail}"
-    }
+    print("🎉 THERE ARE OPEN SEATS!")
 
-    resp = requests.post(WEBHOOK_URL, json=payload, timeout=10)
+    if not WEBHOOK_URL:
+        print("WEBHOOK_URL not set, skipping IFTTT trigger.")
+        return
+
+    print("Triggering IFTTT webhook (no payload)...")
+    resp = requests.post(WEBHOOK_URL, timeout=10)
     print(f"IFTTT HTTP status: {resp.status_code}")
     print(f"IFTTT response body: {resp.text}")
-
     resp.raise_for_status()
     print("✅ IFTTT webhook fired successfully.")
 
