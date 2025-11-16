@@ -43,7 +43,7 @@ def main():
     seats_avail = int(m.group(1))
     print(f"✅ Parsed seats_avail = {seats_avail}")
 
-    if seats_avail = 0:
+    if seats_avail == 0:
         print("🎉 THERE ARE OPEN SEATS!")
     else:
         print("😔 No open seats right now.")
